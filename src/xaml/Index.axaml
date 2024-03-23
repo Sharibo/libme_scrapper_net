@@ -1,0 +1,165 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="860" d:DesignHeight="480"
+        x:Class="libme_scrapper.code.Index"
+        Title="libme_scrapper"
+        RequestedThemeVariant="Light">
+        
+        <RelativePanel 
+                x:Name="GlobalPanel">
+                <Panel
+                        x:Name="HBox"
+                        RelativePanel.AlignTopWithPanel="True"
+                        RelativePanel.AlignLeftWithPanel="True"
+                        RelativePanel.AlignRightWithPanel="True"
+                        Height="32"
+                        Margin="0">
+                
+                        <TextBox
+                                x:Name="AddLinkField"
+                                HorizontalAlignment="Stretch"
+                                Height="28"
+                                Margin="2 2 154 0"
+                                Watermark="Вставьте ссылку с главой ranobelib.me" />
+                        <Button
+                                x:Name="GetTableOfContentsButton"
+                                HorizontalAlignment="Right"
+                                Width="150"
+                                Height="28"
+                                Margin="2"
+                                Click="GetTableOfContents">Загрузить оглавление</Button>
+                </Panel>
+                
+                <!-- <TextBox -->
+                <!--         x:Name="AddLinkField" -->
+                <!--         RelativePanel.AlignTopWithPanel="True" -->
+                <!--         RelativePanel.AlignLeftWithPanel="True" -->
+                <!--         RelativePanel.AlignRightWithPanel="True" -->
+                <!--         HorizontalAlignment="Stretch" -->
+                <!--         Height="28" -->
+                <!--         Margin="2 2 154 2" -->
+                <!--         Watermark="Вставьте ссылку с главой ranobelib.me" /> -->
+                <!-- <Button -->
+                <!--         x:Name="GetTableOfContentsButton" -->
+                <!--         RelativePanel.AlignTopWithPanel="True" -->
+                <!--         RelativePanel.AlignRightWithPanel="True" -->
+                <!--         Width="150" -->
+                <!--         Height="28" -->
+                <!--         Margin="4" -->
+                <!--         Click="GetTableOfContents">Загрузить оглавление</Button> -->
+                
+                <DockPanel
+                        x:Name="HBox2"
+                        RelativePanel.Below="HBox"
+                        RelativePanel.AlignLeftWithPanel="True"
+                        RelativePanel.AlignRightWithPanel="True"
+                        Height="32"
+                        Margin="0 2 0 0">
+
+                        <Button
+                                x:Name="SaveToLocalButton"
+                                DockPanel.Dock="Right"
+                                Width="150"
+                                Height="28"
+                                Margin="2"
+                                IsEnabled="False"
+                                Click="SaveToLocal">Сохранить</Button>
+                        
+                        <Button
+                                x:Name="SetLocalPathButton"
+                                DockPanel.Dock="Right"
+                                Height="28"
+                                Margin="2"
+                                Click="SetLocalPath">
+                        </Button>
+
+                        <TextBox
+                                x:Name="SavePathField"
+                                Height="28"
+                                Margin="2"
+                                Watermark="Путь для сохранения" />
+                </DockPanel>
+
+                <DockPanel
+                        x:Name="HBox3"
+                        RelativePanel.Below="HBox2"
+                        RelativePanel.AlignLeftWithPanel="True"
+                        RelativePanel.AlignRightWithPanel="True"
+                        Height="32"
+                        Margin="0 2 0 0">
+                
+                        <CheckBox
+                                x:Name="GlobalCheckbox"
+                                DockPanel.Dock="Left"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Margin="9 0 9 0" />
+                
+                        <Button
+                                x:Name="ReverseTableShowButton"
+                                Width="28"
+                                Height="28"
+                                Margin="0 2 2 2"
+                                IsEnabled="False"
+                                Click="ReverseTableShow"></Button>
+                
+                        <ToggleButton
+                                x:Name="IsDividedByVolumesButton"
+                                Width="28"
+                                Height="28"
+                                Margin="0 2 2 2"
+                                IsEnabled="False"
+                                Click="IsDividedByVolumesChapters"></ToggleButton>
+                
+                        <ToggleButton
+                                x:Name="IsDividedByNChaptersButton"
+                                IsEnabled="False"
+                                Click="IsDividedByNChapters"></ToggleButton>
+                </DockPanel>
+
+                <Grid
+                        x:Name="ChaptersGrid"
+                        RelativePanel.Below="HBox3" />
+                
+
+                <DockPanel
+                        x:Name="Footer"
+                        RelativePanel.AlignBottomWithPanel="True"
+                        RelativePanel.AlignLeftWithPanel="True"
+                        RelativePanel.AlignRightWithPanel="True"
+                        Height="24"
+                        >       
+                
+                        <Button
+                                x:Name="AboutButton"
+                                DockPanel.Dock="Left"
+                                Width="20"
+                                Height="20"
+                                Margin="2"
+                                Click="GetAbout">
+                                Icon
+                        </Button>
+
+                        <Button
+                                x:Name="ThemeChangerButton"
+                                DockPanel.Dock="Right"
+                                Width="20"
+                                Height="20"
+                                Margin="2"
+                                Click="ChangeTheme">
+                                Icon
+                        </Button>
+
+                        <TextBlock
+                                x:Name="FooterTextBlock"
+                                TextTrimming="CharacterEllipsis"
+                                Height="24">
+                                VALERAWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+                        </TextBlock>
+                </DockPanel>
+
+        </RelativePanel>
+        
+</Window>

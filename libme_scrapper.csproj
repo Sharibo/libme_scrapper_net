@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <BuiltInComInteropSupport>true</BuiltInComInteropSupport><!--TODO попробовать убрать, что поломает? -->
+        <ApplicationManifest>app.manifest</ApplicationManifest>
+        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+        <StartupObject>libme_scrapper.code.DocumentCreator</StartupObject>
+<!--        <StartupObject>libme_scrapper.code.Program</StartupObject>/main:-->
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="NPOI" Version="2.7.0-rc1" />
+        <PackageReference Include="Avalonia" Version="11.0.10"/>
+        <PackageReference Include="Avalonia.Desktop" Version="11.0.10"/>
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.10"/>
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.10"/>
+        <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.10"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="src\code\App.axaml.cs">
+            <DependentUpon>App.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="src\code\Index.axaml.cs">
+            <DependentUpon>MainWindow.axaml</DependentUpon>
+            <SubType>Code</SubType>
+        </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+        <AvaloniaResource Include="src\xaml\styles\**">
+            <SubType>Designer</SubType>
+        </AvaloniaResource>
+    </ItemGroup>
+    <ItemGroup>
+        <AdditionalFiles Include="src\xaml\App.axaml"/>
+        <AdditionalFiles Include="src\xaml\MainWindow.axaml"/>
+    </ItemGroup>
+</Project>
