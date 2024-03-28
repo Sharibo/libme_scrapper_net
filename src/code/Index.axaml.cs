@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using libme_scrapper.code.dto;
 using static libme_scrapper.code.IndexHelper;
 
 namespace libme_scrapper.code;

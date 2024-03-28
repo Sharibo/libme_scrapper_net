@@ -6,11 +6,17 @@
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport><!--TODO попробовать убрать, что поломает? -->
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-        <StartupObject>libme_scrapper.code.DocumentCreator</StartupObject>
+        <StartupObject>libme_scrapper.code.Test</StartupObject>
+<!--        <StartupObject>libme_scrapper.code.Parser</StartupObject>-->
+<!--        <StartupObject>libme_scrapper.code.DocumentCreator</StartupObject>-->
 <!--        <StartupObject>libme_scrapper.code.Program</StartupObject>/main:-->
     </PropertyGroup>
 
+<!--    TODO обновить версии-->
     <ItemGroup>
+        <PackageReference Include="Serilog" Version="4.0.0-dev-02122" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="5.1.0-dev-00943" />
+        <PackageReference Include="HtmlAgilityPack" Version="1.11.59" />
         <PackageReference Include="NPOI" Version="2.7.0-rc1" />
         <PackageReference Include="Avalonia" Version="11.0.10"/>
         <PackageReference Include="Avalonia.Desktop" Version="11.0.10"/>

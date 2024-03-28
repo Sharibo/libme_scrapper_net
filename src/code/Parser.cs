@@ -2,21 +2,28 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection.Metadata;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading;
+using HtmlAgilityPack;
+using libme_scrapper.code.dto;
+using Serilog;
 
 namespace libme_scrapper.code;
 
 class Parser {
     
+    
     // static Document document;               // TODO 
     // static DocumentCreator documentCreator; // TODO 
-    static string? title;                   // TODO 
+    static string title = string.Empty;
 
-    const string START_READING_BUTTON = "div.media-sidebar__buttons.section";
-    const string CHAPTERS_GETTER = "//div[@data-reader-modal='chapters']";
-    const string CHAPTERS = "menu__item";
+    const string START_READING_BUTTON = "//div[contains(@class, 'media-sidebar__buttons') and contains(@class, 'section')]/a";
+    const string CHAPTERS_GETTER = "//script[contains(text(), 'window.__DATA__')]";
+    static string chapters = string.Empty;
+    static string jsonChapters = string.Empty;
     const string CHAPTER_CONTAINER = "div.reader-container.container.container_center";
-    static readonly string[][] SPELLING_PATTERNS = {
+    static readonly string[][] SPELLING_PATTERNS = [
             // doubleSpace
             [@"[\u00A0\s]{{2,}}", " "],
             // dash 1
@@ -39,80 +46,128 @@ class Parser {
             [@"[""'‚‘‛’‟„“”‹›«»]{2}([^\u00A0\s])", "««$1"],
             // little spruces 4
             [@"([^\u00A0\s])[""'‚‘‛’‟„“”‹›«»]{2}", "$1»»"],
-    };
+    ];
     static readonly int[] PAUSES = [100, 150, 200, 250, 300, 350, 400];
     static readonly Random RANDOM = new();
 
 
     // public static List<Chapter> GetTableOfContents(string url) {
-    //
-    //     if (IsMainPageUrl(url)) {
-    //         // get firstChapterUrl from main title page
-    //         string firstChapterUrl = null;
-    //         try {
-    //             Document document = Jsoup.connect(url)
-    //                     .userAgent("Mozilla/5.0")
-    //                     .get();
-    //             Element data = document.select(START_READING_BUTTON).get(0).children().get(1);
-    //             firstChapterUrl = Optional.of(data.attr("href"))
-    //                     .orElseThrow(() -> new RuntimeException("firstChapterUrl was not found!"));
-    //         } catch (IOException e) {
-    //             log.error(url + "\n" + e.getLocalizedMessage());
-    //         }
-    //
-    //         url = firstChapterUrl;
-    //     }
-    //
-    //     // create a browser
-    //     EdgeOptions options = new EdgeOptions();
-    //     options.addArguments("--headless=new");
-    //     options.addArguments("--remote-allow-origins=*");
-    //     EdgeDriver driver = new EdgeDriver(options);
-    //     Dimension dimension = new Dimension(1920, 1080);
-    //     driver.manage().window().setSize(dimension);
-    //
-    //     // get url from TextField
-    //     driver.navigate().to(url);
-    //
-    //     // get table of contents
-    //     WebElement chaptersGetter = driver.findElement(By.xpath(CHAPTERS_GETTER));
-    //     new Actions(driver).moveToElement(chaptersGetter).click().perform();
-    //     List<WebElement> chaptersList = driver.findElements(By.className(CHAPTERS));
-    //     List<Chapter> tableOfContents = new ArrayList<>(chaptersList.size());
-    //     chaptersList.forEach(element ->
-    //             tableOfContents.add(new Chapter(element.getText(), element.getAttribute("href")))
-    //     );
-    //     Collections.reverse(tableOfContents);
-    //
-    //     title = GetTitleName(tableOfContents.get(0).getChapterLink());
-    //
-    //     log.info("Table of content downloaded successfully");
-    //     driver.quit();
-    //
-    //     return tableOfContents;
-    // }
-    //
-    // private static boolean IsMainPageUrl(string url) {
-    //     Pattern p = Pattern.compile("^https://ranobelib.me/[A-Za-z0-9-]+\\?.*$");
-    //     Matcher m = p.matcher(url);
-    //     return  m.find();
-    // }
-    //
-    // private static string GetTitleName(string url) {
-    //     Pattern p = Pattern.compile("ranobelib.me/([A-Za-z0-9-]+)/");
-    //     Matcher m = p.matcher(url);
-    //     if (m.find()) {
-    //         string capitalized = m.group(1).substring(0, 1).toUpperCase() + m.group(1).substring(1);
-    //         if (capitalized.matches("^[A-Za-z0-9-]+novel$")) {
-    //             capitalized = capitalized.substring(0, capitalized.length() - 6);
-    //         }
-    //         return capitalized.replaceAll("-", " ");
-    //     } else {
-    //         log.error("Title name not found in url: " + url);
-    //         return "Unknown";
-    //     }
-    // }
-    //
+    public static void GetTableOfContents(string url) {
+        Log.Information("GetTableOfContents started");
+
+        List<Chapter> chaptersList;
+        List<Branch> branchesList;
+        try {
+            HtmlWeb web = new();
+            HtmlDocument document;
+            
+            if (Regex.IsMatch(url, @"^https://ranobelib.me/[A-Za-z0-9-]+\?.*$", RegexOptions.Compiled)) {
+                Log.Information("Get first chapter url from main title page");
+                document = web.Load(url);
+                url = document.DocumentNode.SelectSingleNode(START_READING_BUTTON).GetAttributeValue("href", "");
+            }
+
+            document = web.Load(url);
+            string rawJSON = document.DocumentNode.SelectSingleNode(CHAPTERS_GETTER).GetDirectInnerText();
+            
+            if (rawJSON.Equals(string.Empty)) {
+                throw new NullReferenceException("rawJSON is empty");
+            }
+
+            title = GetTitleName(url);
+            string chapters = Regex.Match(rawJSON, @".*""chapters"":(.*),""branches"":.*", RegexOptions.Compiled).Groups[1].Value;
+            string branches = Regex.Match(rawJSON, @".*""branches"":(.*),""manga"":.*", RegexOptions.Compiled).Groups[1].Value;
+            
+            List<JSONChapter> jsonChaptersList = JsonSerializer.Deserialize<List<JSONChapter>>(chapters)
+                                          ?? throw new JsonException("Can not deserialize chapters: " + chapters);
+            List<JSONBranch> jsonBranchesList = JsonSerializer.Deserialize<List<JSONBranch>>(branches) 
+                                         ?? throw new JsonException("Can not deserialize branches: " + branches);
+
+            MapJSONChaptersListToChaptersList(jsonChaptersList, out chaptersList);
+            MapJSONBranchesListToBranchesList(jsonBranchesList, out branchesList);
+            
+        } catch (Exception e) when (e is NullReferenceException or JsonException) {
+            Log.Error(e.ToString());
+        } catch (Exception e) {
+            Log.Error($"{url} {e}");
+        }
+    
+    /*
+        // get table of contents
+        WebElement chaptersGetter = driver.findElement(By.xpath(CHAPTERS_GETTER));
+        new Actions(driver).moveToElement(chaptersGetter).click().perform();
+        List<WebElement> chaptersList = driver.findElements(By.className(CHAPTERS));
+        List<Chapter> tableOfContents = new ArrayList<>(chaptersList.size());
+        chaptersList.forEach(element ->
+                tableOfContents.add(new Chapter(element.getText(), element.getAttribute("href")))
+        );
+        Collections.reverse(tableOfContents);
+    
+        title = GetTitleName(tableOfContents.get(0).getChapterLink());
+    
+        Log.Information("Table of content downloaded successfully");
+        driver.quit();
+    
+        return tableOfContents;
+        */
+        Log.Information("GetTableOfContents finished");
+    }
+
+    static void MapJSONChaptersListToChaptersList(List<JSONChapter> jsonChaptersList, out List<Chapter> chapterList) {
+        if (jsonChaptersList.Count > 0) {
+            chapterList = new();
+            foreach (JSONChapter jsonChapter in jsonChaptersList) {
+                chapterList.Add(
+                    new Chapter(
+                        jsonChapter.ChapterName!.Trim(),
+                        $"{title}/v{jsonChapter.ChapterVolume}/c{jsonChapter.ChapterNumber}?bid={jsonChapter.BranchId}",
+                        jsonChapter.BranchId ??= 1 // TODO разобраться
+                    )
+                );
+            }
+        } else {
+            throw new NullReferenceException("chaptersJsonList is empty");
+        }
+    }
+
+    static void MapJSONBranchesListToBranchesList(List<JSONBranch> jsonBranchesList, out List<Branch> branchesList) {
+        if (jsonBranchesList.Count > 0) {
+            branchesList = new();
+            string jsonTeamName = jsonBranchesList[0].Teams.Find(team => team.IsActive == 1).Name; // TODO обдумать
+            string jsonTeamIcon = jsonBranchesList[0].Teams.Find(team => team.IsActive == 1).Cover; // TODO обдумать
+            foreach (JSONBranch jsonBranch in jsonBranchesList) {
+                branchesList.Add(
+                    new Branch(
+                        jsonBranch.Id ??= 1, // TODO 
+                        jsonTeamName,
+                        jsonTeamIcon
+                    )
+                );
+            }
+        } else {
+            throw new NullReferenceException("chaptersJsonList is empty");
+        }
+    }
+
+    static bool IsMainPageUrl(string url) {
+        return Regex.IsMatch(url, @"^https://ranobelib.me/[A-Za-z0-9-]+\?.*$", RegexOptions.Compiled);
+    }
+    
+    static string GetTitleName(string url) {
+        string title = Regex.Match(url, "ranobelib.me/(.+)/.*", RegexOptions.Compiled).Value;
+        
+        if (title.Equals(string.Empty)) {
+            throw new NullReferenceException("Title name not found in url: " + url);
+        }
+
+        string capitalized = string.Concat(title[0].ToString().ToUpper(), title.AsSpan(1));
+        if (Regex.IsMatch(capitalized, "^.+novel$", RegexOptions.Compiled)) {
+            capitalized = capitalized[..^6];
+        }
+
+        return capitalized.Replace("-", " ");
+    }
+    
     // public static void GetData(List<Chapter> checkedChapters) {
     //     documentCreator = new DocumentCreator();
     //     documentCreator.createDocument(title);
@@ -154,7 +209,7 @@ class Parser {
     // }
     //
     // private static void GetChapter(Chapter chapter) {
-    //     log.info("Load: " + chapter.getChapterName());
+    //     Log.Information("Load: " + chapter.getChapterName());
     //     try {
     //         document = Jsoup.connect(chapter.getChapterLink())
     //                 .userAgent("Mozilla/5.0")
@@ -162,7 +217,7 @@ class Parser {
     //         Elements data = document.select(CHAPTER_CONTAINER).get(0).children();
     //         data.forEach(element -> parseData(element));
     //     } catch (IOException e) {
-    //         log.error(chapter.getChapterName() + e.getLocalizedMessage());
+    //         Log.Error(chapter.getChapterName() + e.getLocalizedMessage());
     //     }
     // }
     //
@@ -174,10 +229,10 @@ class Parser {
     //         case "div":
     //             Optional<string> source = Optional.of(element.firstElementChild().attr("data-src"));
     //             source.ifPresentOrElse(url -> documentCreator.addImgParagraph(url),
-    //                     () -> log.error("Image not found! " + element.outerHtml()));
+    //                     () -> Log.Error("Image not found! " + element.outerHtml()));
     //             break;
     //         default:
-    //             log.warn(element.tagName() + " cannot be parsed");
+    //             Log.warn(element.tagName() + " cannot be parsed");
     //     }
     // }
     //

@@ -1,59 +1,65 @@
+using System;
 using System.IO;
 using NPOI.XWPF.UserModel;
 
 namespace libme_scrapper.code;
 
 class DocumentCreator {
+    
+    static readonly char SEPARATOR = Path.DirectorySeparatorChar;
+    static readonly string APP_DIRECTORY = Directory.GetCurrentDirectory() + SEPARATOR;
+    
     public static void Main(string[] args) {
+        Console.WriteLine("The current directory is {0}", APP_DIRECTORY);
         XWPFDocument doc = new();
         XWPFParagraph p1 = doc.CreateParagraph();
-
+        
         p1.Alignment = ParagraphAlignment.CENTER;
         p1.BorderBottom = Borders.Double;
         p1.BorderTop = Borders.Double;
-
+        
         p1.BorderRight = Borders.Double;
         p1.BorderLeft = Borders.Double;
         p1.BorderBetween = Borders.Single;
-
+        
         p1.VerticalAlignment = TextAlignment.TOP;
-
+        
         XWPFRun r1 = p1.CreateRun();
         r1.SetText("The quick brown fox");
         r1.IsBold = true;
         r1.FontFamily = "Courier";
         r1.Underline = UnderlinePatterns.DotDotDash;
         r1.TextPosition = 100;
-
+        
         XWPFParagraph p2 = doc.CreateParagraph();
         p2.Alignment = ParagraphAlignment.RIGHT;
-
+        
         //BORDERS
         p2.BorderBottom = Borders.Double;
         p2.BorderTop = Borders.Double;
         p2.BorderRight = Borders.Double;
         p2.BorderLeft = Borders.Double;
         p2.BorderBetween = Borders.Single;
-
+        
         XWPFRun r2 = p2.CreateRun();
         r2.SetText("jumped over the lazy dog");
         r2.IsStrikeThrough = true;
         r2.FontSize = 20;
-
+        
         XWPFRun r3 = p2.CreateRun();
         r3.SetText("and went away");
         r3.IsStrikeThrough = true;
         r3.FontSize = 30;
         r3.Subscript = VerticalAlign.SUPERSCRIPT;
         r3.SetColor("FF0000");
-
+        
         XWPFParagraph p3 = doc.CreateParagraph();
         p3.IsWordWrapped = true;
         p3.IsPageBreak = true;
         p3.Alignment = ParagraphAlignment.BOTH;
         p3.SpacingLineRule = LineSpacingRule.EXACT;
         p3.IndentationFirstLine = 600;
-
+        
         XWPFRun r4 = p3.CreateRun();
         r4.TextPosition = 20;
         r4.SetText("To be, or not to be: that is the question: "
@@ -70,7 +76,7 @@ class DocumentCreator {
                  + ".......");
         r4.IsItalic = true;
         //This would imply that this break shall be treated as a simple line break, and break the line after that word:
-
+        
         XWPFRun r5 = p3.CreateRun();
         r5.TextPosition = -10;
         r5.SetText("For in that sleep of death what dreams may come");
@@ -81,15 +87,15 @@ class DocumentCreator {
         r5.AddBreak();
         r5.SetText("For who would bear the whips and scorns of time,"
                  + "The oppressor's wrong, the proud man's contumely,");
-
+        
         r5.AddBreak(BreakClear.ALL);
         r5.SetText("The pangs of despised love, the law's delay,"
                  + "The insolence of office and the spurns" + ".......");
-
-        using (FileStream fs = new("simple.docx", FileMode.Create)) {
+        
+        using (FileStream fs = new($"{APP_DIRECTORY}out{SEPARATOR}simple.docx", FileMode.Create)) {
             doc.Write(fs);
         }
-
+        
         doc.Dispose(); // TODO не забыть закрыть после записи файла
     }
 }
