@@ -6,8 +6,8 @@
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport><!--TODO попробовать убрать, что поломает? -->
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-        <StartupObject>libme_scrapper.code.Test</StartupObject>
-<!--        <StartupObject>libme_scrapper.code.Parser</StartupObject>-->
+<!--        <StartupObject>libme_scrapper.code.Test</StartupObject>-->
+        <StartupObject>libme_scrapper.code.Parser</StartupObject>
 <!--        <StartupObject>libme_scrapper.code.DocumentCreator</StartupObject>-->
 <!--        <StartupObject>libme_scrapper.code.Program</StartupObject>/main:-->
     </PropertyGroup>

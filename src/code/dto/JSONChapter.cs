@@ -1,39 +1,44 @@
+using System.Collections.Generic;
+using System.Text;
+using Serilog;
+using static libme_scrapper.code.dto.Nesting;
 using J = System.Text.Json.Serialization.JsonPropertyNameAttribute;
 
 namespace libme_scrapper.code.dto;
 
 class JSONChapter() {
-    
-    [J("chapter_id")] public int? ChapterId { get; set; }
-    [J("chapter_slug")] public string? ChapterSlug { get; set; }
-    [J("chapter_name")] public string? ChapterName { get; set; }
-    [J("chapter_number")] public string? ChapterNumber { get; set; } // TODO уточнить
-    [J("chapter_volume")] public int? ChapterVolume { get; set; }    // TODO уточнить
-    [J("chapter_moderated")] public int? ChapterModerated { get; set; }
-    [J("chapter_user_id")] public int? ChapterUserId { get; set; }
-    [J("chapter_expired_at")] public string? ChapterExpiredAt { get; set; }
-    [J("chapter_scanlator_id")] public int? ChapterScanlatorId { get; set; }
-    [J("chapterCreatedAt")] public string? ChapterCreatedAt { get; set; }
-    [J("status")] public string? Status { get; set; }
-    [J("price")] public int? Price { get; set; }
-    [J("branch_id")] public int? BranchId { get; set; }
-    [J("username")] public string? Username { get; set; }
-    
+    // [J("id")] public int? Id { get; set; }
+    [J("index")] public int? Index { get; set; } // TODO для сортировки или выкинуть
+    // [J("item_number")] public int? ItemNumber { get; set; }
+    [J("volume")] public string? Volume { get; set; }
+    [J("number")] public string? Number { get; set; }
+    // [J("number_secondary")] public string NumberSecondary { get; set; }
+    [J("name")] public string? Name { get; set; }
+    [J("branches_count")] public int? BranchesCount { get; set; }   // TODO подумать
+    [J("branches")] public List<JSONBranch>? JSONBranches { get; set; } // TODO toString todo
+
     public override string ToString() => $"""
-                                         
-                                         ChapterId          {ChapterId}
-                                         ChapterSlug        {ChapterSlug}
-                                         ChapterName        {ChapterName}
-                                         ChapterNumber      {ChapterNumber}
-                                         ChapterVolume      {ChapterVolume}
-                                         ChapterModerated   {ChapterModerated}
-                                         ChapterUserId      {ChapterUserId}
-                                         ChapterExpiredAt   {ChapterExpiredAt}
-                                         ChapterScanlatorId {ChapterScanlatorId}
-                                         ChapterCreatedAt   {ChapterCreatedAt}
-                                         Status             {Status}
-                                         Price              {Price}
-                                         BranchId           {BranchId}
-                                         Username           {Username}
-                                         """;
+                                          
+                                          Chapter:
+                                          Index         {Index}
+                                          Volume        {Volume}
+                                          Number        {Number}
+                                          Name          {Name}
+                                          BranchesCount {BranchesCount}
+                                          JSONBranches  {PrintJSONBranches()}
+                                          """;
+    
+    string PrintJSONBranches() {
+        if (JSONBranches?.Count > 0) {
+            StringBuilder sb = new();
+            foreach (JSONBranch branch in JSONBranches) {
+                sb.Append('\n').Append(branch);
+            }
+            
+            sb.Replace("\n", "\n    ");
+            return sb.ToString();
+        }
+
+        return string.Empty;
+    }
 }

@@ -1,13 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
+using System.Net.Http;
 using System.Reflection.Metadata;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using HtmlAgilityPack;
 using libme_scrapper.code.dto;
 using Serilog;
+using Serilog.Sinks.SystemConsole.Themes;
 
 namespace libme_scrapper.code;
 
@@ -17,6 +21,10 @@ class Parser {
     // static Document document;               // TODO 
     // static DocumentCreator documentCreator; // TODO 
     static string title = string.Empty;
+    const string API = "https://api.lib.social/api/manga/";
+    const string API_FULL_MAIN = "?fields[]=authors";
+    const string API_CHAPTERS = "/chapters";
+    static string apiTitle = string.Empty;
 
     const string START_READING_BUTTON = "//div[contains(@class, 'media-sidebar__buttons') and contains(@class, 'section')]/a";
     const string CHAPTERS_GETTER = "//script[contains(text(), 'window.__DATA__')]";
@@ -49,54 +57,75 @@ class Parser {
     ];
     static readonly int[] PAUSES = [100, 150, 200, 250, 300, 350, 400];
     static readonly Random RANDOM = new();
+    // static readonly HtmlWeb WEB = new();
+    static readonly HttpClient WEB = new(
+        new SocketsHttpHandler {
+            PooledConnectionLifetime = TimeSpan.FromMinutes(2),
+            PooledConnectionIdleTimeout = TimeSpan.FromMinutes(5),
+            MaxConnectionsPerServer = 50,
+        }
+    ) {
+        DefaultRequestVersion = HttpVersion.Version20,
+        DefaultVersionPolicy = HttpVersionPolicy.RequestVersionExact,
+        BaseAddress = new Uri("https://api.lib.social/api/manga/"),
+    };
 
 
     // public static List<Chapter> GetTableOfContents(string url) {
-    public static void GetTableOfContents(string url) {
+    // public static void GetTableOfContents(string url) {
+    public static void Main() {
+        Log.Logger = new LoggerConfiguration()
+           .MinimumLevel.Debug()
+           .WriteTo.Console(outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}",
+                theme: AnsiConsoleTheme.Sixteen)
+           .CreateLogger();
+        const string url = "https://ranobelib.me/ascendance-of-a-bookworm-novel?section=info&ui=1709435";
+        // TODO del ^
+        
         Log.Information("GetTableOfContents started");
 
         List<Chapter> chaptersList;
         List<Branch> branchesList;
         try {
-            HtmlWeb web = new();
             HtmlDocument document;
-            
-            if (Regex.IsMatch(url, @"^https://ranobelib.me/[A-Za-z0-9-]+\?.*$", RegexOptions.Compiled)) {
-                Log.Information("Get first chapter url from main title page");
-                document = web.Load(url);
-                url = document.DocumentNode.SelectSingleNode(START_READING_BUTTON).GetAttributeValue("href", "");
-            }
 
-            document = web.Load(url);
-            string rawJSON = document.DocumentNode.SelectSingleNode(CHAPTERS_GETTER).GetDirectInnerText();
-            
-            if (rawJSON.Equals(string.Empty)) {
+            SetApiTitleAndTitle(url);
+
+            using HttpResponseMessage response = WEB.GetAsync($"{apiTitle}{API_CHAPTERS}").WaitAsync(TimeSpan.FromSeconds(3)).Result;
+            string json = response.EnsureSuccessStatusCode().Content.ReadAsStringAsync().WaitAsync(TimeSpan.FromSeconds(5)).Result;
+
+            if (json.Equals(string.Empty)) {
                 throw new NullReferenceException("rawJSON is empty");
             }
-
-            title = GetTitleName(url);
-            string chapters = Regex.Match(rawJSON, @".*""chapters"":(.*),""branches"":.*", RegexOptions.Compiled).Groups[1].Value;
-            string branches = Regex.Match(rawJSON, @".*""branches"":(.*),""manga"":.*", RegexOptions.Compiled).Groups[1].Value;
             
-            List<JSONChapter> jsonChaptersList = JsonSerializer.Deserialize<List<JSONChapter>>(chapters)
-                                          ?? throw new JsonException("Can not deserialize chapters: " + chapters);
-            List<JSONBranch> jsonBranchesList = JsonSerializer.Deserialize<List<JSONBranch>>(branches) 
-                                         ?? throw new JsonException("Can not deserialize branches: " + branches);
+            JSONChaptersList jsonChaptersList = JsonSerializer.Deserialize<JSONChaptersList>(json)
+                                             ?? throw new JsonException("Can not deserialize chapters list: " + json);
 
-            MapJSONChaptersListToChaptersList(jsonChaptersList, out chaptersList);
-            MapJSONBranchesListToBranchesList(jsonBranchesList, out branchesList);
-            
+            Log.Information(jsonChaptersList.ToString());
+            // string chapters = Regex.Match(json, @".*""chapters"":(.*),""branches"":.*", RegexOptions.Compiled).Groups[1].Value;
+            // string branches = Regex.Match(json, @".*""branches"":(.*),""manga"":.*", RegexOptions.Compiled).Groups[1].Value;
+            //
+            // List<JSONChapter> jsonChaptersList = JsonSerializer.Deserialize<List<JSONChapter>>(chapters)
+            //                               ?? throw new JsonException("Can not deserialize chapters: " + chapters);
+            // List<JSONBranch> jsonBranchesList = JsonSerializer.Deserialize<List<JSONBranch>>(branches) 
+            //                              ?? throw new JsonException("Can not deserialize branches: " + branches);
+
+            // MapJSONChaptersListToChaptersList(jsonChaptersList, out chaptersList);
+            // MapJSONBranchesListToBranchesList(jsonBranchesList, out branchesList);
+
         } catch (Exception e) when (e is NullReferenceException or JsonException) {
             Log.Error(e.ToString());
-        } catch (Exception e) {
+        } catch (ArgumentNullException e) { // todo
             Log.Error($"{url} {e}");
+        } catch (Exception e) {
+            Log.Error($"{url} {e}"); // TODO api and more
         }
     
     /*
         // get table of contents
-        WebElement chaptersGetter = driver.findElement(By.xpath(CHAPTERS_GETTER));
+        WEBElement chaptersGetter = driver.findElement(By.xpath(CHAPTERS_GETTER));
         new Actions(driver).moveToElement(chaptersGetter).click().perform();
-        List<WebElement> chaptersList = driver.findElements(By.className(CHAPTERS));
+        List<WEBElement> chaptersList = driver.findElements(By.className(CHAPTERS));
         List<Chapter> tableOfContents = new ArrayList<>(chaptersList.size());
         chaptersList.forEach(element ->
                 tableOfContents.add(new Chapter(element.getText(), element.getAttribute("href")))
@@ -113,41 +142,78 @@ class Parser {
         Log.Information("GetTableOfContents finished");
     }
 
-    static void MapJSONChaptersListToChaptersList(List<JSONChapter> jsonChaptersList, out List<Chapter> chapterList) {
-        if (jsonChaptersList.Count > 0) {
-            chapterList = new();
-            foreach (JSONChapter jsonChapter in jsonChaptersList) {
-                chapterList.Add(
-                    new Chapter(
-                        jsonChapter.ChapterName!.Trim(),
-                        $"{title}/v{jsonChapter.ChapterVolume}/c{jsonChapter.ChapterNumber}?bid={jsonChapter.BranchId}",
-                        jsonChapter.BranchId ??= 1 // TODO разобраться
-                    )
-                );
+    static void SetApiTitleAndTitle(string url) {
+        string apiTitleLegacy = Regex.Match(url, @"^https://ranobelib.me/([A-Za-z0-9-]+)(\?*.*|/.+)$", RegexOptions.Compiled).Groups[1].Value;
+        Log.Information("legacyUrl " + apiTitleLegacy);
+        
+        if (apiTitleLegacy != string.Empty) {
+            Log.Information("Legacy front version");
+            using HttpResponseMessage response = WEB.GetAsync(apiTitleLegacy).WaitAsync(TimeSpan.FromSeconds(3)).Result;
+            string json = response.EnsureSuccessStatusCode().Content.ReadAsStringAsync().WaitAsync(TimeSpan.FromSeconds(3)).Result;
+            
+            apiTitle = Regex.Match(json, "\"slug_url\":\"([^\"]+)\",", RegexOptions.Compiled).Groups[1].Value;
+            if (apiTitle == string.Empty) {
+                throw new NullReferenceException("apiTitle is null");
             }
+            
+            title = Regex.Unescape(Regex.Match(json, "\"rus_name\":\"([^\"]+)\",", RegexOptions.Compiled).Groups[1].Value);
+            title = Regex.Replace(title, @" [(]{0,1}(веб|веб[ -]{0,1}версия|веб[ -]{0,1}[новела]{5,8}|[новела]{5,8}|[лайт]{3,5}[ -]{0,1}[новела]{5,8}|лн|вн|web|web[ -]{0,1}[version]{6,8}|web[ -]{0,1}[novel]{4,6}|ln|wn|[novel]{4,6}|[light]{4,6}[ -]{0,1}[novel]{4,6})[)]{0,1}$", string.Empty, RegexOptions.Compiled | RegexOptions.IgnoreCase).Trim();
+            Log.Information(apiTitle);
+            Log.Information(title);
         } else {
-            throw new NullReferenceException("chaptersJsonList is empty");
+            apiTitle = Regex.Match(url, @"^https://test-front.ranobelib.me/ru/manga/([A-Za-z0-9-]+)\?*.*$", RegexOptions.Compiled).Groups[1].Value;
+            if (apiTitle == string.Empty) {
+                throw new NullReferenceException("apiTitle is null");
+            }
+            
+            Log.Information("New test-front version");
+            using HttpResponseMessage response = WEB.GetAsync(apiTitle).WaitAsync(TimeSpan.FromSeconds(3)).Result;
+            string json = response.EnsureSuccessStatusCode().Content.ReadAsStringAsync().WaitAsync(TimeSpan.FromSeconds(3)).Result;
+            
+            title = Regex.Unescape(Regex.Match(json, "\"rus_name\":\"([^\"]+)\",", RegexOptions.Compiled).Groups[1].Value);
+            title = Regex.Replace(title, @" [(]{0,1}(веб|веб[ -]{0,1}версия|веб[ -]{0,1}[новела]{5,8}|[новела]{5,8}|[лайт]{3,5}[ -]{0,1}[новела]{5,8}|лн|вн|web|web[ -]{0,1}[version]{6,8}|web[ -]{0,1}[novel]{4,6}|ln|wn|[novel]{4,6}|[light]{4,6}[ -]{0,1}[novel]{4,6})[)]{0,1}$", string.Empty, RegexOptions.Compiled | RegexOptions.IgnoreCase).Trim();
+
+            Log.Information(apiTitle);
+            Log.Information(title);
         }
+        
     }
 
-    static void MapJSONBranchesListToBranchesList(List<JSONBranch> jsonBranchesList, out List<Branch> branchesList) {
-        if (jsonBranchesList.Count > 0) {
-            branchesList = new();
-            string jsonTeamName = jsonBranchesList[0].Teams.Find(team => team.IsActive == 1).Name; // TODO обдумать
-            string jsonTeamIcon = jsonBranchesList[0].Teams.Find(team => team.IsActive == 1).Cover; // TODO обдумать
-            foreach (JSONBranch jsonBranch in jsonBranchesList) {
-                branchesList.Add(
-                    new Branch(
-                        jsonBranch.Id ??= 1, // TODO 
-                        jsonTeamName,
-                        jsonTeamIcon
-                    )
-                );
-            }
-        } else {
-            throw new NullReferenceException("chaptersJsonList is empty");
-        }
-    }
+    // static void MapJSONChaptersListToChaptersList(List<JSONChapter> jsonChaptersList, out List<Chapter> chapterList) {
+    //     if (jsonChaptersList.Count > 0) {
+    //         chapterList = new();
+    //         foreach (JSONChapter jsonChapter in jsonChaptersList) {
+    //             chapterList.Add(
+    //                 new Chapter(
+    //                     jsonChapter.ChapterName!.Trim(),
+    //                     $"{title}/v{jsonChapter.ChapterVolume}/c{jsonChapter.ChapterNumber}?bid={jsonChapter.BranchId}",
+    //                     jsonChapter.BranchId ??= 1 // TODO разобраться
+    //                 )
+    //             );
+    //         }
+    //     } else {
+    //         throw new NullReferenceException("chaptersJsonList is empty");
+    //     }
+    // }
+    //
+    // static void MapJSONBranchesListToBranchesList(List<JSONBranch> jsonBranchesList, out List<Branch> branchesList) {
+    //     if (jsonBranchesList.Count > 0) {
+    //         branchesList = new();
+    //         string jsonTeamName = jsonBranchesList[0].JSONTeams.Find(team => team.IsActive == 1).Name; // TODO обдумать
+    //         string jsonTeamIcon = jsonBranchesList[0].JSONTeams.Find(team => team.IsActive == 1).Cover; // TODO обдумать
+    //         foreach (JSONBranch jsonBranch in jsonBranchesList) {
+    //             branchesList.Add(
+    //                 new Branch(
+    //                     jsonBranch.Id ??= 1, // TODO 
+    //                     jsonTeamName,
+    //                     jsonTeamIcon
+    //                 )
+    //             );
+    //         }
+    //     } else {
+    //         throw new NullReferenceException("chaptersJsonList is empty");
+    //     }
+    // }
 
     static bool IsMainPageUrl(string url) {
         return Regex.IsMatch(url, @"^https://ranobelib.me/[A-Za-z0-9-]+\?.*$", RegexOptions.Compiled);
