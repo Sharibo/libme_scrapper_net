@@ -28,9 +28,9 @@ public partial class Test {
         DefaultVersionPolicy = HttpVersionPolicy.RequestVersionExact,
         BaseAddress = new Uri("https://api.lib.social/api/manga/"),
     };
-    
-    
-    public static async Task Main() {
+
+    // asdkjqwdjlk
+    public static void Main() {
         Log.Logger = new LoggerConfiguration()
            .MinimumLevel.Debug()
            .WriteTo.Console(outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}",
@@ -55,7 +55,7 @@ public partial class Test {
                 DefaultVersionPolicy = HttpVersionPolicy.RequestVersionOrLower,
                 BaseAddress = new Uri("https://api.lib.social/api/manga/"),
             };
-            
+
             Log.Information(WEB.BaseAddress?.ToString()!);
             SetApiBody(url2);
             SetApiBody(url3);
@@ -80,7 +80,7 @@ public partial class Test {
             //                               // ?? throw new JsonException("Can not deserialize");
             // List<JSONChapter> chaptersList = JsonSerializer.Deserialize<List<JSONChapter>>(chapters, jsonOptions)
             //                               ?? throw new JsonException("Can not deserialize");
-            // List<JSONBranch> branchesList = JsonSerializer.Deserialize<List<JSONBranch>>(branches, jsonOptions)
+            // List<JSONBranchInChapters> branchesList = JsonSerializer.Deserialize<List<JSONBranchInChapters>>(branches, jsonOptions)
             //                               ?? throw new JsonException("Can not deserialize");
             // // JSONChapters chaptersList = JsonSerializer.Deserialize<JSONChapters>(chapters, jsonOptions) 
             //                               // ?? throw new JsonException("Can not deserialize");
@@ -90,7 +90,7 @@ public partial class Test {
             //     Log.Information(jsonChapter.ToString());
             // }
             // for (int index = 0; index < branchesList.Count; index++) {
-            //     JSONBranch jsonBranch = branchesList[index];
+            //     JSONBranchInChapters jsonBranch = branchesList[index];
             //     Log.Information(jsonBranch.ToString());
             // }
             // // if (chaptersList.chapters != null) {
@@ -100,20 +100,19 @@ public partial class Test {
             // // } else {
             // //     Log.Information("ha-ha");
             // // }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Log.Error(e.ToString());
             e.HelpLink = url;
             Log.Error(e.HelpLink ?? "without stacktrace");
         }
 
     }
-    
-    
+
+
     static void SetApiBody(string url) {
         string legacyUrl = Regex.Match(url, @"^https://ranobelib.me/([A-Za-z0-9-]+)(\?*.*|/.+)$", RegexOptions.Compiled).Groups[1].Value;
         Log.Information("legacyUrl " + legacyUrl);
-        
+
         if (legacyUrl != string.Empty) {
             Log.Information("Fix legacy first chapter url from main title page");
             using HttpResponseMessage response = WEB.GetAsync(legacyUrl).WaitAsync(TimeSpan.FromSeconds(5)).Result;
@@ -136,7 +135,7 @@ public partial class Test {
             Log.Information("New test-front version");
             Log.Information(apiBody);
         }
-        
+
     }
 
     [GeneratedRegex(" [(]{0,1}(веб|веб[ -]{0,1}версия|веб[ -]{0,1}[новела]{5,8}|[новела]{5,8}|[лайт]{3,5}[ -]{0,1}[новела]{5,8}|лн|вн|web|web[ -]{0,1}[version]{6,8}|web[ -]{0,1}[novel]{4,6}|ln|wn|[novel]{4,6}|[light]{4,6}[ -]{0,1}[novel]{4,6})[)]{0,1}$", RegexOptions.Compiled | RegexOptions.IgnoreCase)]

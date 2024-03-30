@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using System.Text;
-using Serilog;
-using static libme_scrapper.code.dto.Nesting;
 using J = System.Text.Json.Serialization.JsonPropertyNameAttribute;
 
 namespace libme_scrapper.code.dto;
@@ -15,7 +13,7 @@ class JSONChapter() {
     // [J("number_secondary")] public string NumberSecondary { get; set; }
     [J("name")] public string? Name { get; set; }
     [J("branches_count")] public int? BranchesCount { get; set; }   // TODO подумать
-    [J("branches")] public List<JSONBranch>? JSONBranches { get; set; } // TODO toString todo
+    [J("branches")] public List<JSONBranchInChapters>? JSONBranches { get; set; } // TODO toString todo
 
     public override string ToString() => $"""
                                           
@@ -25,13 +23,13 @@ class JSONChapter() {
                                           Number        {Number}
                                           Name          {Name}
                                           BranchesCount {BranchesCount}
-                                          JSONBranches  {PrintJSONBranches()}
+                                          JSONBranches: {PrintJSONBranches()}
                                           """;
     
     string PrintJSONBranches() {
         if (JSONBranches?.Count > 0) {
             StringBuilder sb = new();
-            foreach (JSONBranch branch in JSONBranches) {
+            foreach (JSONBranchInChapters branch in JSONBranches) {
                 sb.Append('\n').Append(branch);
             }
             

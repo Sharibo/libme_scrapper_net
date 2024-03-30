@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using System.Text;
-using Serilog;
-using static libme_scrapper.code.dto.Nesting;
 using J = System.Text.Json.Serialization.JsonPropertyNameAttribute;
 
 namespace libme_scrapper.code.dto;
@@ -11,7 +9,7 @@ class JSONChaptersList {
     
     public override string ToString() => $"""
                                           
-                                          JSONChapters  {PrintJSONChapters()}
+                                          JSONChapters: {PrintJSONChapters()}
                                           """;
     
     string PrintJSONChapters() {

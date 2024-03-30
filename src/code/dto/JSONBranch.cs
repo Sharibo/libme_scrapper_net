@@ -1,24 +1,22 @@
 using System.Collections.Generic;
 using System.Text;
-using Serilog;
 using J = System.Text.Json.Serialization.JsonPropertyNameAttribute;
 
 namespace libme_scrapper.code.dto;
 
 class JSONBranch {
-    [J("id")] public long? Id { get; set; }
-    [J("branch_id")] public long? BranchId { get; set; }
-    // [J("created_at")] public string? CreatedAt { get; set; }
+    [J("id")] public int? Id { get; set; }
+    [J("name")] public string? Name { get; set; }
+    // [J("notify")] public bool? Notify { get; set; }    
     [J("teams")] public List<JSONTeam>? JSONTeams { get; set; }
-    // [J("user")]       public User User { get; set; }       
 
 
     public override string ToString() => $"""
-                                          
+
                                           Branch:
                                           Id        {Id}
-                                          MangaId   {BranchId}
-                                          Teams     {PrintJSONTeams()}
+                                          MangaId   {Name}
+                                          Teams:    {PrintJSONTeams()}
                                           """;
 
     string PrintJSONTeams() {
