@@ -1,0 +1,41 @@
+<AnchorPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:id="anchorPane"
+            prefHeight="475.0"
+            prefWidth="435.0"
+            fx:controller="com.gmail.alexejkrawez.libme_scrapper.HelpWindowController">
+
+    <VBox AnchorPane.topAnchor="10"
+          AnchorPane.rightAnchor="10.0"
+          AnchorPane.leftAnchor="10"
+          AnchorPane.bottomAnchor="35"
+          alignment="TOP_LEFT">
+        <Label fx:id="helpText"
+               wrapText="true"/>
+
+        <Label fx:id="aboutText"
+               wrapText="true"/>
+
+        <Hyperlink fx:id="githubLink">
+            <VBox.margin>
+                <Insets left="16.0"/>
+            </VBox.margin>
+        </Hyperlink>
+    </VBox>
+
+    <VBox AnchorPane.rightAnchor="10.0"
+          AnchorPane.leftAnchor="10"
+          AnchorPane.bottomAnchor="5"
+          alignment="CENTER">
+        <Button fx:id="closeDialogButton"
+                alignment="CENTER"
+                contentDisplay="CENTER"
+                minWidth="150.0"
+                maxWidth="150.0"
+                minHeight="30.0"
+                maxHeight="30.0"
+                text="Понятно"
+                onAction="#closeDialog">
+        </Button>
+    </VBox>
+</AnchorPane>

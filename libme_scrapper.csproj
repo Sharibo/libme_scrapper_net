@@ -7,9 +7,9 @@
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
 <!--        <StartupObject>libme_scrapper.code.Test</StartupObject>-->
-        <StartupObject>libme_scrapper.code.Parser</StartupObject>
+<!--        <StartupObject>libme_scrapper.code.Parser</StartupObject>-->
 <!--        <StartupObject>libme_scrapper.code.DocumentCreator</StartupObject>-->
-<!--        <StartupObject>libme_scrapper.code.Program</StartupObject>/main:-->
+        <StartupObject>libme_scrapper.code.Program</StartupObject>
     </PropertyGroup>
 
 <!--    TODO обновить версии-->
@@ -19,6 +19,7 @@
         <PackageReference Include="HtmlAgilityPack" Version="1.11.59" />
         <PackageReference Include="NPOI" Version="2.7.0-rc1" />
         <PackageReference Include="Avalonia" Version="11.0.10"/>
+        <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.10" />
         <PackageReference Include="Avalonia.Desktop" Version="11.0.10"/>
         <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.10"/>
         <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.10"/>

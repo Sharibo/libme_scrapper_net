@@ -37,6 +37,8 @@ public partial class Test {
                 theme: AnsiConsoleTheme.Sixteen)
            .CreateLogger();
 
+        // int i = IndexHelper.ShowChapters();
+        // Log.Information(i.ToString());
         string url = "https://ranobelib.me/ascendance-of-a-bookworm-novel/v1/c0?ui=1709435";
         string url2 = "https://ranobelib.me/ascendance-of-a-bookworm-novel?section=info&ui=1709435";
         string url3 = "https://test-front.ranobelib.me/ru/manga/6689--ascendance-of-a-bookworm-novel?from=catalog";

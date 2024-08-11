@@ -1,0 +1,166 @@
+/media/Tihonya/AA547E09547DD891/linux/C_sharp/avalonia/libme_scrapper/bin/Debug/net8.0/libme_scrapper
+2024-03-29 22:28:06.467 +03:00 [INF] GetTableOfContents started
+2024-03-29 22:28:07.077 +03:00 [INF] legacyUrl ascendance-of-a-bookworm-novel
+2024-03-29 22:28:07.078 +03:00 [INF] Legacy front version
+2024-03-29 22:28:08.930 +03:00 [INF] 6689--ascendance-of-a-bookworm-novel
+2024-03-29 22:28:08.931 +03:00 [INF] Власть книжного червя
+2024-03-29 22:28:09.953 +03:00 [INF] 
+JSONChapters: 
+    
+    Chapter:
+    Index         1
+    Volume        1
+    Number        0
+    Name          Начальные иллюстрации (❀✿)
+    BranchesCount 1
+    JSONBranches: 
+        
+        Branch:
+        Id        1795643
+        MangaId   12002
+        Teams:    
+            Team:
+            Name  novel.tl
+            Cover:
+            Thumbnail /uploads/team/noveltl/cover/9VR5MIyNyURR_thumb.jpg
+            Default   /uploads/team/noveltl/cover/9VR5MIyNyURR_250x350.jpg
+    
+    Chapter:
+    Index         2
+    Volume        1
+    Number        1
+    Name          Пролог
+    BranchesCount 2
+    JSONBranches: 
+        
+        Branch:
+        Id        186939
+        MangaId   12003
+        Teams:    
+            Team:
+            Name  Rulate Project
+            Cover:
+            Thumbnail /uploads/team/rulate-project/cover/ZStBRi03NxAh_thumb.jpg
+            Default   /uploads/team/rulate-project/cover/ZStBRi03NxAh_250x350.jpg
+            Team:
+            Name  YM
+            Cover:
+            Thumbnail /uploads/team/ym/cover/C61Fyx8NSlTM_thumb.jpg
+            Default   /uploads/team/ym/cover/C61Fyx8NSlTM_250x350.jpg
+        
+        Branch:
+        Id        1795656
+        MangaId   12002
+        Teams:    
+            Team:
+            Name  novel.tl
+            Cover:
+            Thumbnail /uploads/team/noveltl/cover/9VR5MIyNyURR_thumb.jpg
+            Default   /uploads/team/noveltl/cover/9VR5MIyNyURR_250x350.jpg
+    
+    Chapter:
+    Index         3
+    Volume        1
+    Number        2
+    Name          Новая жизнь
+    BranchesCount 2
+    JSONBranches: 
+        
+        Branch:
+        Id        186940
+        MangaId   12003
+        Teams:    
+            Team:
+            Name  Rulate Project
+            Cover:
+            Thumbnail /uploads/team/rulate-project/cover/ZStBRi03NxAh_thumb.jpg
+            Default   /uploads/team/rulate-project/cover/ZStBRi03NxAh_250x350.jpg
+            Team:
+            Name  YM
+            Cover:
+            Thumbnail /uploads/team/ym/cover/C61Fyx8NSlTM_thumb.jpg
+            Default   /uploads/team/ym/cover/C61Fyx8NSlTM_250x350.jpg
+        
+        Branch:
+        Id        1795657
+        MangaId   12002
+        Teams:    
+            Team:
+            Name  novel.tl
+            Cover:
+            Thumbnail /uploads/team/noveltl/cover/9VR5MIyNyURR_thumb.jpg
+            Default   /uploads/team/noveltl/cover/9VR5MIyNyURR_250x350.jpg
+    
+    Chapter:
+    Index         4
+    Volume        1
+    Number        3
+    Name          Исследование моего дома
+    BranchesCount 2
+    JSONBranches: 
+        
+        Branch:
+        Id        186941
+        MangaId   12003
+        Teams:    
+            Team:
+            Name  Rulate Project
+            Cover:
+            Thumbnail /uploads/team/rulate-project/cover/ZStBRi03NxAh_thumb.jpg
+            Default   /uploads/team/rulate-project/cover/ZStBRi03NxAh_250x350.jpg
+            Team:
+            Name  YM
+            Cover:
+            Thumbnail /uploads/team/ym/cover/C61Fyx8NSlTM_thumb.jpg
+            Default   /uploads/team/ym/cover/C61Fyx8NSlTM_250x350.jpg
+        
+        Branch:
+        Id        1795660
+        MangaId   12002
+        Teams:    
+            Team:
+            Name  novel.tl
+            Cover:
+            Thumbnail /uploads/team/noveltl/cover/9VR5MIyNyURR_thumb.jpg
+            Default   /uploads/team/noveltl/cover/9VR5MIyNyURR_250x350.jpg
+    
+    Chapter:
+    Index         5
+    Volume        1
+    Number        4
+    Name          Исследование города
+    BranchesCount 2
+    JSONBranches: 
+        
+        Branch:
+        Id        186942
+        MangaId   12003
+        Teams:    
+            Team:
+            Name  Rulate Project
+            Cover:
+            Thumbnail /uploads/team/rulate-project/cover/ZStBRi03NxAh_thumb.jpg
+            Default   /uploads/team/rulate-project/cover/ZStBRi03NxAh_250x350.jpg
+            Team:
+            Name  YM
+            Cover:
+            Thumbnail /uploads/team/ym/cover/C61Fyx8NSlTM_thumb.jpg
+            Default   /uploads/team/ym/cover/C61Fyx8NSlTM_250x350.jpg
+        
+        Branch:
+        Id        1795661
+        MangaId   12002
+        Teams:    
+            Team:
+            Name  novel.tl
+            Cover:
+            Thumbnail /uploads/team/noveltl/cover/9VR5MIyNyURR_thumb.jpg
+            Default   /uploads/team/noveltl/cover/9VR5MIyNyURR_250x350.jpg
+2024-03-29 22:28:09.954 +03:00 [INF] 
+Cover:
+Thumbnail /uploads/team/rulate-project/cover/ZStBRi03NxAh_thumb.jpg
+Default   /uploads/team/rulate-project/cover/ZStBRi03NxAh_250x350.jpg
+2024-03-29 22:28:09.954 +03:00 [INF] GetTableOfContents finished
+
+Process finished with exit code 0.
+

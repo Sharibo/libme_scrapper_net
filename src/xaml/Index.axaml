@@ -119,10 +119,21 @@
                                 Click="IsDividedByNChapters"></ToggleButton>
                 </DockPanel>
 
-                <Grid
+                <!-- <Grid -->
+                        <!-- x:Name="ChaptersGrid" -->
+                        <!-- RelativePanel.Below="HBox3" /> -->
+                <!-- <Grid
                         x:Name="ChaptersGrid"
-                        RelativePanel.Below="HBox3" />
-                
+                        RelativePanel.Below="HBox3">
+                </Grid> -->
+                    <DataGrid x:Name="DataGrid1" RelativePanel.Below="HBox3"/>
+                <DataGrid   x:Name="DataGrid2"
+                            Margin="20" ItemsSource="{Binding People}" 
+                            AutoGenerateColumns="True" IsReadOnly="True" 
+                            GridLinesVisibility="All"
+                            BorderThickness="1" BorderBrush="Gray">
+                            RelativePanel.Below="DataGrid">
+                </DataGrid>
 
                 <DockPanel
                         x:Name="Footer"

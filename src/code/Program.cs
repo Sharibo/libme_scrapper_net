@@ -13,13 +13,14 @@ class Program {
     // yet and stuff might break.
     [STAThread]
     public static void Main(string[] args) {
-        BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
         Log.Logger = new LoggerConfiguration()
            .MinimumLevel.Debug()
            .WriteTo.Console(theme: AnsiConsoleTheme.Sixteen)
            .CreateLogger();
+        
+        BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
 
-        Log.Information("Hello, Serilog!");
+        Log.Information("App exit");
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.
@@ -27,5 +28,11 @@ class Program {
         => AppBuilder.Configure<App>()
            .UsePlatformDetect()
            .WithInterFont()
-           .LogToTrace(LogEventLevel.Debug); // TODO убрать не забыть
+           .LogToTrace(LogEventLevel.Debug, 
+                LogArea.Visual,
+                LogArea.Layout,
+                LogArea.Control,
+                LogArea.Binding,
+                LogArea.Property
+                ); // TODO убрать не забыть
 }

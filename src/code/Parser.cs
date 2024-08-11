@@ -75,32 +75,34 @@ class Parser {
     };
 
     public static void Main() {
-        Log.Logger = new LoggerConfiguration()
-           .MinimumLevel.Debug()
-           .WriteTo.Console(outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}",
-                theme: AnsiConsoleTheme.Sixteen)
-           .CreateLogger();
-        IList<Branch> list = GetTableOfContents("https://ranobelib.me/ascendance-of-a-bookworm-novel?section=info&ui=1709435");
-        foreach (Branch branch in list) {
+        // Log.Logger = new LoggerConfiguration()
+        //    .MinimumLevel.Debug()
+        //    .WriteTo.Console(outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}",
+        //         theme: AnsiConsoleTheme.Sixteen)
+        //    .CreateLogger();
+        GetTableOfContents("https://ranobelib.me/ascendance-of-a-bookworm-novel?section=info&ui=1709435");
+        foreach (Branch branch in Index.TableOfContents!) {
             Log.Information(branch.ToString());
         }
     }
 
-    public static IList<Branch> GetTableOfContents(string url) {
+    public static bool GetTableOfContents(string url) {
         Log.Information("GetTableOfContents started");
 
-        IList<Branch> branchesList = null!;
         try {
             SetApiTitleAndTitle(url);
-            branchesList = GetBranches();
-            IList<Chapter> chaptersList = GetChapters();
-            FillBranches(ref branchesList, ref chaptersList);
+            List<Branch> branchesList = GetBranches();
+            List<Chapter> chaptersList = GetChapters();
+            Index.TableOfContents = FillBranches(branchesList, chaptersList);
         } catch (Exception e) when (e is NullReferenceException or JsonException) {
             Log.Error(e.ToString());
+            return false;
         } catch (ArgumentNullException e) { // todo
             Log.Error($"{url} {e}");
+            return false;
         } catch (Exception e) {
             Log.Error($"{url} {e}"); // TODO api and more
+            return false;
         }
     
     /*
@@ -122,10 +124,10 @@ class Parser {
         return tableOfContents;
         */
         Log.Information("GetTableOfContents finished");
-        return branchesList;
+        return true;
     }
 
-    static void FillBranches(ref IList<Branch> branchesList, ref IList<Chapter> chaptersList) {
+    static List<Branch> FillBranches(List<Branch> branchesList, List<Chapter> chaptersList) {
         Dictionary<int, int> ids = new();
         for (int index = 0; index < branchesList.Count; index++) {
             ids.Add(branchesList[index].Id, index);
@@ -134,6 +136,8 @@ class Parser {
         foreach (Chapter chapter in chaptersList) {
             branchesList[ids[chapter.BranchId]].Chapters.Add(chapter);
         }
+
+        return branchesList;
     }
 
     static List<Branch> GetBranches() {
