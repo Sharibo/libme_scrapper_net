@@ -3,6 +3,7 @@ using System;
 namespace libme_scrapper.code.dto;
 
 class Chapter {
+
     public int BranchId { get; set; }
     public int Index { get; set; }
     public string Volume { get; set; }
@@ -15,8 +16,9 @@ class Chapter {
         Volume = jsonChapter.Volume ?? throw new NullReferenceException("volume is null");
         Number = jsonChapter.Number ?? throw new NullReferenceException("number is null");
         Name = jsonChapter.Name ?? throw new NullReferenceException("name is null");
-        BranchId = jsonChapter.JSONBranches![branchIndex].BranchId ?? throw new NullReferenceException("branch id is null, branchIndex=" + branchIndex);
-        Link = $"/chapter?branch_id={BranchId}&number={Number}&volume={Volume}";
+        BranchId = jsonChapter.JSONBranches![branchIndex].BranchId ?? -1;
+        // BranchId = jsonChapter.JSONBranches![branchIndex].BranchId ?? throw new NullReferenceException("branch id is null, branchIndex=" + branchIndex);
+        Link = BranchId == -1 ? $"/chapter?number={Number}&volume={Volume}" : $"/chapter?branch_id={BranchId}&number={Number}&volume={Volume}";
     }
 
     // public Chapter(JSONChapter jsonChapter, int branchId) {
@@ -27,7 +29,7 @@ class Chapter {
     //     Name = jsonChapter?.Name ?? string.Empty;
     //     Link = $"/chapter?branch_id={BranchId}&number={Number}&volume={Volume}"; // TODO если наллы геттеры переделать
     // }
-    
+
     public override string ToString() => $"""
                                           
                                           BranchId  {BranchId}

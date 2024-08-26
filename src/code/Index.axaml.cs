@@ -1,72 +1,60 @@
-using System;
-using System.Collections.Generic;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+
 using libme_scrapper.code.dto;
-using static libme_scrapper.code.IndexHelper;
+
 using Serilog;
-using Serilog.Sinks.SystemConsole.Themes;
-using System.Collections.ObjectModel;
-using System.Linq;
-using Avalonia.Data;
-using libme_scrapper.src.code;
+
+using System;
+using System.Collections.Generic;
+
+using static libme_scrapper.code.IndexHelper;
 
 namespace libme_scrapper.code;
 
 partial class Index : Window {
+    static readonly ILogger LOG = Log.ForContext<Index>();
     // bool isDividedByVolumes = false; // TODO под вопросом
     // bool isDividedByNChapters = false;
     int nChapters = 50;
-    public static List<Branch>? TableOfContents { get; set; }
-    public ObservableCollection<Person> People { get; }
+    IList<Branch>? tableOfContents;
+
     public Index() {
         InitializeComponent();
-#if DEBUG
-        this.AttachDevTools();
-#endif
-        
-        ObservableCollection<string[]> dataSource = [
-            [ "A", "B", "C" ],
-            [ "C", "B", "A" ],
-        ];
-        DataGrid1.ItemsSource = dataSource;
-        // foreach (int idx in dataSource[0].Select((value, index) => index)) {
-        //     DataGrid.Columns.Add(
-        //         new DataGridTextColumn { Header = $"{idx + 1}. column", 
-        //         Binding = new Binding($"[{idx}]") }
-        //     );
-        // }
+        #if DEBUG
+                this.AttachDevTools();
+        #endif
 
-        // DataGrid.AutoGenerateColumns = false;
-        // DataGrid.ItemsSource = dataSource;
-
-        List<Person> people = new() {
-                new Person("Neil", "Armstrong"),
-                new Person("Buzz", "Lightyear"),
-                new Person("James", "Kirk")
-            };
-        
-        People = new ObservableCollection<Person>(people);
-        Log.Information("binding complete!");
+        LOG.Information("Hello, Index!");
     }
 
     void GetTableOfContents(object? sender, RoutedEventArgs e) {
-        Log.Information("GetTableOfContents started");
+        LOG.Information("Hello2222222, Index!");
+        // Logger.TryGet(LogEventLevel.Fatal, LogArea.Control)?.Log(this, "Avalonia GetTableOfContents");
+        // System.Diagnostics.Debug.WriteLine("System Diagnostics GetTableOfContents");
+        // log.Log(this, "Avalonia LOG GetTableOfContents");
+        Serilog.Log.Information("GetTableOfContents");
         GetTableOfContentsButton.IsEnabled = false;
         string url = AddLinkField.Text?.Trim() ?? "";
 
-        // if (CheckUrl(url, ref FooterTextBlock)) {
-            SetDisable(SaveToLocalButton, GlobalCheckbox, ReverseTableShowButton);
-            // ChaptersGrid.Focus = true; // TODO 
-            Log.Information("GetTableOfContents 2");
-            if (TableOfContents != null && TableOfContents?.Count > 0) {
-                TableOfContents.Clear();
+        if (CheckUrl(url, ref FooterTextBlock)) {
+            //SetDisable(SaveToLocalButton, GlobalCheckbox, ReverseTableShowButton); //TODO 
+            //Log.Information("before focus");
+            ChaptersGrid.Focus(); // TODO
+            //Log.Information("after focus");
+
+            if (tableOfContents != null && tableOfContents?.Count > 0) {
+                tableOfContents.Clear();
             }
-            Log.Information("GetTableOfContents 3");
-            Parser.GetTableOfContents(url);
-            // int i = ShowChapters(ref ChaptersGrid, ref DataGrid);
-            // Log.Information(i.ToString());
+
+            tableOfContents = Parser.GetTableOfContents(url);
+
+            foreach (Branch branch in tableOfContents) {
+                Console.WriteLine(branch.ToString());
+                //Log.Information(branch.ToString());
+            }
+            //Log.Information("after foreach");
 
             // if (Exception == null) { // TODO 
             //     int chapters = showChapters(tableOfContents, tableView);
@@ -75,15 +63,14 @@ partial class Index : Window {
             //     setEnable(saveToLocalButton, globalCheckbox, reverseTableShowButton);
             // } else {
             //     log.error("getTableOfContents() - slave thread failed: " + throwable.getLocalizedMessage());
-            //     setFooterLabelAsync("Возникла ошибка при загрузке!");
+            //     setFooterLabelAsync("Возникла ошибка при загрузке!");е
             // }
 
             GetTableOfContentsButton.IsEnabled = true;
-            SetEnable(SaveToLocalButton, GlobalCheckbox, ReverseTableShowButton);
-            // }); // non-blocking
-        // } else {
-        //     GetTableOfContentsButton.IsEnabled = false;
-        // }
+        // }); // non-blocking
+        } else {
+            GetTableOfContentsButton.IsEnabled = false;
+        }
     }
 
     void SetLocalPath(object? sender, RoutedEventArgs e) {
@@ -107,8 +94,6 @@ partial class Index : Window {
     }
 
     void GetAbout(object? sender, RoutedEventArgs e) {
-        Log.Information("Hello, GetAbout!");
-        Console.WriteLine("Hello, GetAbout2!");
         // Create the window object
         Window sampleWindow =
             new Window {
@@ -127,7 +112,7 @@ partial class Index : Window {
     void ChangeTheme(object? sender, RoutedEventArgs e) {
         Close();
     }
-
+    
     void SetEnable(params Control[] controls) {
         foreach (Control control in controls) {
             control.IsEnabled = true;

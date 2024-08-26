@@ -32,24 +32,6 @@
                                 Click="GetTableOfContents">Загрузить оглавление</Button>
                 </Panel>
                 
-                <!-- <TextBox -->
-                <!--         x:Name="AddLinkField" -->
-                <!--         RelativePanel.AlignTopWithPanel="True" -->
-                <!--         RelativePanel.AlignLeftWithPanel="True" -->
-                <!--         RelativePanel.AlignRightWithPanel="True" -->
-                <!--         HorizontalAlignment="Stretch" -->
-                <!--         Height="28" -->
-                <!--         Margin="2 2 154 2" -->
-                <!--         Watermark="Вставьте ссылку с главой ranobelib.me" /> -->
-                <!-- <Button -->
-                <!--         x:Name="GetTableOfContentsButton" -->
-                <!--         RelativePanel.AlignTopWithPanel="True" -->
-                <!--         RelativePanel.AlignRightWithPanel="True" -->
-                <!--         Width="150" -->
-                <!--         Height="28" -->
-                <!--         Margin="4" -->
-                <!--         Click="GetTableOfContents">Загрузить оглавление</Button> -->
-                
                 <DockPanel
                         x:Name="HBox2"
                         RelativePanel.Below="HBox"
@@ -119,21 +101,10 @@
                                 Click="IsDividedByNChapters"></ToggleButton>
                 </DockPanel>
 
-                <!-- <Grid -->
-                        <!-- x:Name="ChaptersGrid" -->
-                        <!-- RelativePanel.Below="HBox3" /> -->
-                <!-- <Grid
+                <Grid
                         x:Name="ChaptersGrid"
-                        RelativePanel.Below="HBox3">
-                </Grid> -->
-                    <DataGrid x:Name="DataGrid1" RelativePanel.Below="HBox3"/>
-                <DataGrid   x:Name="DataGrid2"
-                            Margin="20" ItemsSource="{Binding People}" 
-                            AutoGenerateColumns="True" IsReadOnly="True" 
-                            GridLinesVisibility="All"
-                            BorderThickness="1" BorderBrush="Gray">
-                            RelativePanel.Below="DataGrid">
-                </DataGrid>
+                        RelativePanel.Below="HBox3" />
+                
 
                 <DockPanel
                         x:Name="Footer"
@@ -167,7 +138,7 @@
                                 x:Name="FooterTextBlock"
                                 TextTrimming="CharacterEllipsis"
                                 Height="24">
-                                VALERAWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+                                VALERAWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
                         </TextBlock>
                 </DockPanel>
 

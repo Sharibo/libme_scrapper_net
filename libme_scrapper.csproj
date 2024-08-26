@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
         <TargetFramework>net8.0</TargetFramework>
@@ -7,24 +7,38 @@
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
 <!--        <StartupObject>libme_scrapper.code.Test</StartupObject>-->
-<!--        <StartupObject>libme_scrapper.code.Parser</StartupObject>-->
+        <!-- <StartupObject>libme_scrapper.code.Parser</StartupObject> -->
 <!--        <StartupObject>libme_scrapper.code.DocumentCreator</StartupObject>-->
-        <StartupObject>libme_scrapper.code.Program</StartupObject>
+       <StartupObject>libme_scrapper.code.Program</StartupObject>
+       <!-- /main: -->
+    </PropertyGroup>
+    <PropertyGroup Label="Avalonia">
+      <AvaloniaXamlIlDebuggerLaunch>False</AvaloniaXamlIlDebuggerLaunch>
     </PropertyGroup>
 
 <!--    TODO обновить версии-->
     <ItemGroup>
-        <PackageReference Include="Serilog" Version="4.0.0-dev-02122" />
-        <PackageReference Include="Serilog.Sinks.Console" Version="5.1.0-dev-00943" />
+        <PackageReference Include="Serilog" Version="4.0.1" />
+        <PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+        <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+        
         <PackageReference Include="HtmlAgilityPack" Version="1.11.59" />
         <PackageReference Include="NPOI" Version="2.7.0-rc1" />
-        <PackageReference Include="Avalonia" Version="11.0.10"/>
-        <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.10" />
-        <PackageReference Include="Avalonia.Desktop" Version="11.0.10"/>
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.10"/>
-        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.10"/>
+        
+        <PackageReference Include="Avalonia" Version="11.1.3" />
+        <PackageReference Include="Avalonia.Desktop" Version="11.1.3" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.1.3" />
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.1.3" />
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.10"/>
+        <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.3" />
+        
+        <!--<PackageReference Include="Avalonia" Version="11.0.2"/>-->
+        <!--<PackageReference Include="Avalonia.Desktop" Version="11.0.2"/>-->
+        <!--<PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.2"/>-->
+        <!--<PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.2"/>-->
+        <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+        <!--<PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.2"/>-->
     </ItemGroup>
 
     <ItemGroup>
@@ -32,10 +46,10 @@
             <DependentUpon>App.axaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
-        <Compile Update="src\code\Index.axaml.cs">
+        <!-- <Compile Update="src\code\Index.axaml.cs">
             <DependentUpon>MainWindow.axaml</DependentUpon>
             <SubType>Code</SubType>
-        </Compile>
+        </Compile> -->
     </ItemGroup>
 
     <ItemGroup>
@@ -44,7 +58,7 @@
         </AvaloniaResource>
     </ItemGroup>
     <ItemGroup>
-        <AdditionalFiles Include="src\xaml\App.axaml"/>
-        <AdditionalFiles Include="src\xaml\MainWindow.axaml"/>
+        <AdditionalFiles Include="src\xaml\App.axaml" />
+        <!-- <AdditionalFiles Include="src\xaml\MainWindow.axaml"/> -->
     </ItemGroup>
 </Project>

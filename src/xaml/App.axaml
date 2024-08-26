@@ -5,6 +5,8 @@
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
              <Application.Styles>
+                <!-- <SimpleTheme /> -->
+                <!-- <FluentTheme /> -->
                  <!-- <StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml"/> -->
                  <StyleInclude Source="avares://libme_scrapper/src/xaml/styles/LibMeStyleLight.axaml"/>
              </Application.Styles>

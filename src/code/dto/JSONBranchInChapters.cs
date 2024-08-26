@@ -15,7 +15,7 @@ class JSONBranchInChapters {
     public override string ToString() => $"""
                                           
                                           Branch:
-                                          BranchId  {BranchId}
+                                          BranchId  {BranchId?.ToString() ?? "null"}
                                           """;
 
     // string PrintJSONTeams() {
